@@ -1,97 +1,66 @@
 <script setup lang="ts">
 import orgApi from '../api/org'
 import { ref, onMounted } from 'vue'
+import type Node from 'element-plus/es/components/tree/src/model/node'
 
-
-onMounted(() => {
-  orgApi.query().then((users) => {
-    console.log('orgs', users)
-    data.value = users
-  })
-})
+// const data = ref<Tree[]>([])
 
 interface Tree {
     id:string
-    name: string
+    label: string
     children?: Tree[]
 }
 
-const handleNodeClick = (data: Tree) => {
-  console.log(data)
+onMounted(() => {
+//   orgApi.query().then((users) => {
+//     console.log('orgs', users)
+//     users.forEach((user) => {
+//         var temp : Tree = {
+//             id: user.id,
+//             label: user.name,
+//             children: []
+//         }
+//         data.value.push(temp)
+//     })
+//   })
+})
+
+
+const loadNode = (node: Node, resolve: (data: Tree[]) => void) => {
+    if (node.level === 0) {
+        orgApi.query().then((users) => {
+            return resolve(users.map((user) => {
+                return {
+                    id: user.id,
+                    label: user.name,
+                    children: []
+                }
+            }))
+        })
+    } else {
+        orgApi.query(node.data.id).then((users) => {
+            console.log('node.data.id', node.data.id)
+            console.log('orgs', users)
+            return resolve(users.map((user) => {
+                return {
+                    id: user.id,
+                    label: user.name,
+                    children: []
+                }
+            }))
+        })
+    }
+   
 }
 
-const data = ref<Tree[]>([])
 
-// const data: Tree[] = [
-//   {
-//     label: 'Level one 1',
-//     children: [
-//       {
-//         label: 'Level two 1-1',
-//         children: [
-//           {
-//             label: 'Level three 1-1-1',
-//           },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     label: 'Level one 2',
-//     children: [
-//       {
-//         label: 'Level two 2-1',
-//         children: [
-//           {
-//             label: 'Level three 2-1-1',
-//           },
-//         ],
-//       },
-//       {
-//         label: 'Level two 2-2',
-//         children: [
-//           {
-//             label: 'Level three 2-2-1',
-//           },
-//         ],
-//       },
-//     ],
-//   },
-//   {
-//     label: 'Level one 3',
-//     children: [
-//       {
-//         label: 'Level two 3-1',
-//         children: [
-//           {
-//             label: 'Level three 3-1-1',
-//           },
-//         ],
-//       },
-//       {
-//         label: 'Level two 3-2',
-//         children: [
-//           {
-//             label: 'Level three 3-2-1',
-//           },
-//         ],
-//       },
-//     ],
-//   },
-// ]
-
-const defaultProps = {
-  children: 'children',
-  label: 'label',
-}
 </script>
 
 <template>
    <el-tree
         style="max-width: 600px"
-        :data="data"
-        :props="defaultProps"
-        @node-click="handleNodeClick"
+        :load="loadNode"
+        lazy
     /> 
 </template>
 
