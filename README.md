@@ -36,8 +36,44 @@
   "userId": 111323290434354540545
 }
 ```
+回答：
+```
+const jsonString = '{"userId": 111323290434354540545}';
+const jsonObject = JSON.parse(jsonString);
+console.log(jsonObject.userId); // 输出：111323290434354540545
+```
 ### 前端需要*稳定*每隔`1s`向服务端请求`API`, 请问如何实现？
+回答：
+```
+// 定义一个函数用于向服务端请求API
+function fetchDataFromServer() {
+    // 向服务端请求API的代码，可以使用 fetch 或者 XMLHttpRequest
+    // 这里假设使用 fetch，你需要根据实际情况修改
+    fetch('your_api_url')
+        .then(response => response.json())
+        .then(data => {
+            // 在这里处理从服务端获取到的数据
+            console.log(data);
+        })
+        .catch(error => {
+            // 在这里处理请求失败的情况
+            console.error('Error fetching data:', error);
+        });
+}
+
+// 每隔1秒执行一次 fetchDataFromServer 函数
+setInterval(fetchDataFromServer, 1000);
+```
 
 ### 什么情况下，你会为你的项目引入状态管理库，比如`Redux`, `Pinia`, 可以简述一下起到了什么作用么？
+回答：一般用来管理复杂的应用状态、大型应用、跨组件通信、时间旅行调试以及异步数据管理等情况。这些库提供了统一的状态管理机制，帮助提高代码的可维护性、可扩展性和开发效率。
 
 ### 为什么`ESM`与`CJS`不能兼容？
+回答：
+ESM（ECMAScript Modules）和CJS（CommonJS）是两种不同的模块系统，它们有不同的语法和加载机制，因此不能直接兼容。
+
+1. **语法不同**：ESM 使用 `import` 和 `export` 关键字来定义模块，而CJS 使用 `require()` 和 `module.exports` 或 `exports` 来定义模块，这两种语法不兼容。
+
+2. **加载机制不同**：ESM 是静态导入，模块在编译时确定，而CJS 是动态加载，模块在运行时加载，这两种加载机制也不兼容。
+
+由于这些差异，ESM 和 CJS 不能直接在同一个代码文件中混合使用，需要通过转换工具（如Babel）或者运行时环境（如Node.js的`--experimental-modules`标志）来实现互相之间的兼容性。
